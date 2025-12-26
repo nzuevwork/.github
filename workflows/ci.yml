@@ -1,0 +1,27 @@
+name: CI - Docker Validation
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+
+jobs:
+  docker-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Dockerfile
+        run: |
+          docker build -t test-app ./app
+
+      - name: Validate docker-compose files
+        run: |
+          docker compose -f docker-compose.blue.yml config
+          docker compose -f docker-compose.green.yml config
+          docker compose -f docker-compose.nginx.yml config
+
+      - name: CI completed
+        run: echo "CI checks passed successfully"
